@@ -19,6 +19,8 @@ WORKDIR /app
 COPY --from=build /app /app
 
 # install dependency
+RUN apt update
+RUN apt install -y python-dev build-essential
 RUN pip install -r requirements.txt
 
 CMD ["python", "app.py"]
