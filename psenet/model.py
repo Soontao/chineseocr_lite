@@ -23,7 +23,7 @@ inplace = True
 
 
 class PSENet(nn.Module):
-    def __init__(self, backbone, result_num=6, scale: int = 1, pretrained=False ):
+    def __init__(self, backbone, result_num=6, scale: int = 1, pretrained=False):
         super(PSENet, self).__init__()
 
         assert backbone in d, 'backbone must in: {}'.format(d)
@@ -58,21 +58,24 @@ class PSENet(nn.Module):
         self.smooth1 = nn.Sequential(nn.Conv2d(conv_out, conv_out, kernel_size=3, stride=1, padding=1, groups=conv_out),
                                      nn.BatchNorm2d(conv_out),
                                      nn.ReLU(inplace=inplace),
-                                     nn.Conv2d(conv_out, conv_out, kernel_size=1, padding=0, stride=1),
+                                     nn.Conv2d(
+                                         conv_out, conv_out, kernel_size=1, padding=0, stride=1),
                                      nn.BatchNorm2d(conv_out),
                                      nn.ReLU(inplace=inplace)
                                      )
         self.smooth2 = nn.Sequential(nn.Conv2d(conv_out, conv_out, kernel_size=3, stride=1, padding=1, groups=conv_out),
                                      nn.BatchNorm2d(conv_out),
                                      nn.ReLU(inplace=inplace),
-                                     nn.Conv2d(conv_out, conv_out, kernel_size=1, padding=0, stride=1),
+                                     nn.Conv2d(
+                                         conv_out, conv_out, kernel_size=1, padding=0, stride=1),
                                      nn.BatchNorm2d(conv_out),
                                      nn.ReLU(inplace=inplace)
                                      )
         self.smooth3 = nn.Sequential(nn.Conv2d(conv_out, conv_out, kernel_size=3, stride=1, padding=1, groups=conv_out),
                                      nn.BatchNorm2d(conv_out),
                                      nn.ReLU(inplace=inplace),
-                                     nn.Conv2d(conv_out, conv_out, kernel_size=1, padding=0, stride=1),
+                                     nn.Conv2d(
+                                         conv_out, conv_out, kernel_size=1, padding=0, stride=1),
                                      nn.BatchNorm2d(conv_out),
                                      nn.ReLU(inplace=inplace)
                                      )
@@ -82,7 +85,8 @@ class PSENet(nn.Module):
             nn.BatchNorm2d(conv_out),
             nn.ReLU(inplace=inplace)
         )
-        self.out_conv = nn.Conv2d(conv_out, result_num, kernel_size=1, stride=1)
+        self.out_conv = nn.Conv2d(
+            conv_out, result_num, kernel_size=1, stride=1)
 
     def forward(self, input: torch.Tensor):
         _, _, H, W = input.size()
@@ -103,7 +107,8 @@ class PSENet(nn.Module):
         if self.train:
             x = F.interpolate(x, size=(H, W), mode='nearest')
         else:
-            x = F.interpolate(x, size=(H // self.scale, W // self.scale), mode='nearest')
+            x = F.interpolate(x, size=(H // self.scale, W //
+                                       self.scale), mode='nearest')
         return x
 
     def _upsample_add(self, x, y):
@@ -116,7 +121,6 @@ class PSENet(nn.Module):
         p5 = F.interpolate(p5, size=(h, w), mode='nearest')
 
         return p2 + p3 + p4 + p5
-
 
 
 if __name__ == '__main__':

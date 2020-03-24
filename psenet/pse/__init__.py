@@ -6,8 +6,10 @@ import torch
 
 BASE_DIR = os.path.dirname(os.path.realpath(__file__))
 
-if subprocess.call(['make', '-C', BASE_DIR]) != 0:  # return value
-    raise RuntimeError('Cannot compile pse: {}'.format(BASE_DIR))
+if not os.path.isfile(os.path.join(BASE_DIR, "pse.so")):  # if not exist, build it
+    if subprocess.call(['make', '-C', BASE_DIR]) != 0:  # return value
+        raise RuntimeError('Cannot compile pse: {}'.format(BASE_DIR))
+
 
 def pse_warpper(kernals, min_area=5):
     '''
@@ -24,7 +26,8 @@ def pse_warpper(kernals, min_area=5):
         return np.array([]), []
     kernals = np.array(kernals)
 
-    label_num, label = cv2.connectedComponents(kernals[0].astype(np.uint8), connectivity=4)
+    label_num, label = cv2.connectedComponents(
+        kernals[0].astype(np.uint8), connectivity=4)
     label_values = []
     for label_idx in range(1, label_num):
         if np.sum(label == label_idx) < min_area:
@@ -38,9 +41,9 @@ def pse_warpper(kernals, min_area=5):
 
 
 def decode(preds, scale,
-           threshold=0.7311 ,
+           threshold=0.7311,
            # threshold=0.7
-           no_sigmode = False
+           no_sigmode=False
            ):
     """
     在输出上使用sigmoid 将值转换为置信度，并使用阈值来进行文字和背景的区分
@@ -53,7 +56,6 @@ def decode(preds, scale,
         preds = torch.sigmoid(preds)
         preds = preds.detach().cpu().numpy()
 
-
     score = preds[-1].astype(np.float32)
 
     preds = preds > threshold
@@ -64,7 +66,8 @@ def decode(preds, scale,
     bbox_list = []
     rects = []
     for label_value in label_values:
-        points = np.array(np.where(pred == label_value)).transpose((1, 0))[:, ::-1]
+        points = np.array(np.where(pred == label_value)
+                          ).transpose((1, 0))[:, ::-1]
 
         if points.shape[0] < 800 / (scale * scale):
             continue
@@ -80,4 +83,4 @@ def decode(preds, scale,
         bbox_list.append([bbox[1], bbox[2], bbox[3], bbox[0]])
         rects.append(rect)
 
-    return pred, np.array(bbox_list),rects
+    return pred, np.array(bbox_list), rects

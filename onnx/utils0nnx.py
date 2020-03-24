@@ -1,4 +1,6 @@
 import torch
+
+
 def check_keys(model, pretrained_state_dict):
     ckpt_keys = set(pretrained_state_dict.keys())
     model_keys = set(model.state_dict().keys())
@@ -15,13 +17,14 @@ def check_keys(model, pretrained_state_dict):
 def remove_prefix(state_dict, prefix):
     ''' Old style model is stored with all names of parameters sharing common prefix 'module.' '''
     print('remove prefix \'{}\''.format(prefix))
-    f = lambda x: x.split(prefix, 1)[-1] if x.startswith(prefix) else x
+    def f(x): return x.split(prefix, 1)[-1] if x.startswith(prefix) else x
     return {f(key): value for key, value in state_dict.items()}
 
 
 def load_model(model, model_path):
     start_epoch = 0
-    checkpoint = torch.load(model_path, map_location=lambda storage, loc: storage)
+    checkpoint = torch.load(
+        model_path, map_location=lambda storage, loc: storage)
     # print('loaded {}, epoch {}'.format(model_path, checkpoint['epoch']))
     try:
         state_dict_ = checkpoint["state_dict"]
@@ -46,9 +49,9 @@ def load_model(model, model_path):
     for k in state_dict:
         if k in model_state_dict:
             if state_dict[k].shape != model_state_dict[k].shape:
-                print('Skip loading parameter {}, required shape{}, ' \
+                print('Skip loading parameter {}, required shape{}, '
                       'loaded shape{}. {}'.format(
-                    k, model_state_dict[k].shape, state_dict[k].shape, msg))
+                          k, model_state_dict[k].shape, state_dict[k].shape, msg))
                 state_dict[k] = model_state_dict[k]
         else:
             print('Drop parameter {}.'.format(k) + msg)

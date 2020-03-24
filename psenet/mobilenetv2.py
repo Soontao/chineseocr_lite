@@ -34,7 +34,8 @@ class ConvBNReLU(nn.Sequential):
     def __init__(self, in_planes, out_planes, kernel_size=3, stride=1, groups=1):
         padding = (kernel_size - 1) // 2
         super(ConvBNReLU, self).__init__(
-            nn.Conv2d(in_planes, out_planes, kernel_size, stride, padding, groups=groups, bias=False),
+            nn.Conv2d(in_planes, out_planes, kernel_size, stride,
+                      padding, groups=groups, bias=False),
             nn.BatchNorm2d(out_planes),
             nn.ReLU6(inplace=True)
         )
@@ -55,7 +56,8 @@ class InvertedResidual(nn.Module):
             layers.append(ConvBNReLU(inp, hidden_dim, kernel_size=1))
         layers.extend([
             # dw
-            ConvBNReLU(hidden_dim, hidden_dim, stride=stride, groups=hidden_dim),
+            ConvBNReLU(hidden_dim, hidden_dim,
+                       stride=stride, groups=hidden_dim),
             # pw-linear
             nn.Conv2d(hidden_dim, oup, 1, 1, 0, bias=False),
             nn.BatchNorm2d(oup),
@@ -70,21 +72,21 @@ class InvertedResidual(nn.Module):
 
 
 class MobileNetV2(nn.Module):
-    def __init__(self,width_mult=1.0,round_nearest=8,):
+    def __init__(self, width_mult=1.0, round_nearest=8,):
         super(MobileNetV2, self).__init__()
         block = InvertedResidual
         input_channel = 32
         inverted_residual_setting = [
             # t, c, n, s
-            [1, 16, 1, 1], # 0
-            [6, 24, 2, 2], # 1
-            [6, 32, 3, 2], # 2
-            [6, 64, 4, 2], # 3
-            [6, 96, 3, 1], # 4
-            [6, 160, 3, 2],# 5
-            [6, 320, 1, 1],# 6
+            [1, 16, 1, 1],  # 0
+            [6, 24, 2, 2],  # 1
+            [6, 32, 3, 2],  # 2
+            [6, 64, 4, 2],  # 3
+            [6, 96, 3, 1],  # 4
+            [6, 160, 3, 2],  # 5
+            [6, 320, 1, 1],  # 6
         ]
-        self.feat_id = [1,2,4,6]
+        self.feat_id = [1, 2, 4, 6]
         self.feat_channel = []
 
         # only check the first element, assuming user knows t,c,n,s are required
@@ -93,18 +95,20 @@ class MobileNetV2(nn.Module):
                              "or a 4-element list, got {}".format(inverted_residual_setting))
 
         # building first layer
-        input_channel = _make_divisible(input_channel * width_mult, round_nearest)
+        input_channel = _make_divisible(
+            input_channel * width_mult, round_nearest)
         features = [ConvBNReLU(3, input_channel, stride=2)]
 
         # building inverted residual blocks
-        for id,(t, c, n, s) in enumerate(inverted_residual_setting):
+        for id, (t, c, n, s) in enumerate(inverted_residual_setting):
             output_channel = _make_divisible(c * width_mult, round_nearest)
             for i in range(n):
                 stride = s if i == 0 else 1
-                features.append(block(input_channel, output_channel, stride, expand_ratio=t))
+                features.append(
+                    block(input_channel, output_channel, stride, expand_ratio=t))
                 input_channel = output_channel
-            if id in self.feat_id  :
-                self.__setattr__("feature_%d"%id,nn.Sequential(*features))
+            if id in self.feat_id:
+                self.__setattr__("feature_%d" % id, nn.Sequential(*features))
                 self.feat_channel.append(output_channel)
                 features = []
 
@@ -121,18 +125,20 @@ class MobileNetV2(nn.Module):
     def forward(self, x):
         y = []
         for id in self.feat_id:
-            x = self.__getattr__("feature_%d"%id)(x)
+            x = self.__getattr__("feature_%d" % id)(x)
             y.append(x)
         return y
 
-def load_model(model,state_dict):
-    new_model=model.state_dict()
+
+def load_model(model, state_dict):
+    new_model = model.state_dict()
     new_keys = list(new_model.keys())
     old_keys = list(state_dict.keys())
     restore_dict = OrderedDict()
     for id in range(len(new_keys)):
         restore_dict[new_keys[id]] = state_dict[old_keys[id]]
     model.load_state_dict(restore_dict)
+
 
 def mobilenet_v2(pretrained=False, progress=True, **kwargs):
     """
@@ -146,5 +152,5 @@ def mobilenet_v2(pretrained=False, progress=True, **kwargs):
     # if pretrained:
     #     state_dict = load_state_dict_from_url(model_urls['mobilenet_v2'],
     #                                           progress=progress)
-        # load_model(model,state_dict)
+    # load_model(model,state_dict)
     return model

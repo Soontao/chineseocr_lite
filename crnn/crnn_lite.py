@@ -44,24 +44,23 @@ class CRnn(nn.Module):
             # exp_num = exp * nIn
             if i == 0:
                 cnn.add_module('conv_{0}'.format(i),
-                               nn.Conv2d(nIn , nOut , ks[i], ss[i], ps[i]))
+                               nn.Conv2d(nIn, nOut, ks[i], ss[i], ps[i]))
                 cnn.add_module('relu_{0}'.format(i), nn.ReLU(True))
             else:
 
                 cnn.add_module('conv{0}'.format(i),
-                               nn.Conv2d( nIn,  nIn, ks[i], ss[i], ps[i],groups=nIn))
+                               nn.Conv2d(nIn,  nIn, ks[i], ss[i], ps[i], groups=nIn))
                 if batchNormalization:
-                    cnn.add_module('batchnorm{0}'.format(i), nn.BatchNorm2d(nIn))
+                    cnn.add_module('batchnorm{0}'.format(
+                        i), nn.BatchNorm2d(nIn))
                 cnn.add_module('relu{0}'.format(i), nn.ReLU(True))
 
                 cnn.add_module('convproject{0}'.format(i),
                                nn.Conv2d(nIn, nOut, 1, 1, 0))
                 if batchNormalization:
-                    cnn.add_module('batchnormproject{0}'.format(i), nn.BatchNorm2d(nOut))
+                    cnn.add_module('batchnormproject{0}'.format(
+                        i), nn.BatchNorm2d(nOut))
                 cnn.add_module('relu{0}'.format(i), nn.ReLU(True))
-
-
-
 
         convRelu(0)
         # cnn.add_module('pooling{0}'.format(0), nn.MaxPool2d(2, 2))  # 64x16x64

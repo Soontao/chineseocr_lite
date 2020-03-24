@@ -4,9 +4,9 @@
 import torch
 import torch.nn as nn
 import collections
-from PIL import  Image
-import  numpy as np
-from torchvision import  transforms
+from PIL import Image
+import numpy as np
+from torchvision import transforms
 
 
 class resizeNormalize(object):
@@ -44,16 +44,17 @@ class strLabelConverter(object):
         for i, char in enumerate(alphabet):
             # NOTE: 0 is reserved for 'blank' required by wrap_ctc
             self.dict[char] = i + 1
+
     def encode(self, text, depth=0):
         """Support batch or single str."""
         length = []
-        result=[]
+        result = []
         for str in text:
             length.append(len(str))
             for char in str:
-               #print(char)
-               index = self.dict[char]
-               result.append(index)
+                # print(char)
+                index = self.dict[char]
+                result.append(index)
         text = result
         return (torch.IntTensor(text), torch.IntTensor(length))
 
@@ -122,7 +123,8 @@ def loadData(v, data):
 
 def prettyPrint(v):
     print('Size {0}, Type: {1}'.format(str(v.size()), v.data.type()))
-    print('| Max: %f | Min: %f | Mean: %f' % (v.max().data[0], v.min().data[0], v.mean().data[0]))
+    print('| Max: %f | Min: %f | Mean: %f' %
+          (v.max().data[0], v.min().data[0], v.mean().data[0]))
 
 
 def assureRatio(img):

@@ -161,6 +161,7 @@ class ResNet(nn.Module):
         c5 = self.layer4(c4)
         return c2, c3, c4, c5
 
+
 def resnet18(pretrained=False, **kwargs):
     """Constructs a ResNet-18 model.
 
@@ -184,6 +185,7 @@ def resnet34(pretrained=False, **kwargs):
         model._load_pretrained_model(model_urls['resnet34'])
     return model
 
+
 def resnet50(pretrained=False, **kwargs):
     """Constructs a ResNet-50 model.
 
@@ -194,9 +196,6 @@ def resnet50(pretrained=False, **kwargs):
     if pretrained:
         model._load_pretrained_model(model_urls['resnet50'])
     return model
-
-
-
 
 
 def resnet101(pretrained=False, **kwargs):

@@ -1,20 +1,20 @@
 """
 This code uses the onnx model to detect faces from live video or cameras.
 """
-import os,sys
-sys.path.insert(0,"..")
-from pse import  decode
-import time
-
-import cv2
-import numpy as np
-import onnx
-
+import glob
+import onnxruntime
 from utils.utils import show_img, draw_bbox
+import onnx
+import numpy as np
+import cv2
+import time
+from pse import decode
+import os
+import sys
+sys.path.insert(0, "..")
 
 
 # onnx runtime
-import onnxruntime
 
 onnx_path = "psenetlite_mobilenetv2.onnx"
 session = onnxruntime.InferenceSession(onnx_path)
@@ -27,10 +27,8 @@ img_path = './微信截图_20180801152018.png'
 img_path = './2.jpg'
 
 
-
 # confidences, boxes = predictor.run(image)
 root = "../test_images/input/*.*p*g"
-import glob
 imgs = glob.glob(root)
 for img_path in imgs:
 
@@ -66,16 +64,14 @@ for img_path in imgs:
     image = np.expand_dims(image, axis=0)
     image = image.astype(np.float32)
 
-
-
     time_time = time.time()
     preds = session.run([output_name], {input_name: image})
     # print(preds[0][0])
-    preds, boxes_list = decode(preds[0][0], 1 , no_sigmode = True)
+    preds, boxes_list = decode(preds[0][0], 1, no_sigmode=True)
     scale = (preds.shape[1] / w, preds.shape[0] / h)
     if len(boxes_list):
         boxes_list = boxes_list / scale
 
     print(time.time() - time_time)
     img = draw_bbox(img_path, boxes_list, color=(0, 0, 255))
-    cv2.imwrite(img_path.replace("input","output"), img)
+    cv2.imwrite(img_path.replace("input", "output"), img)
