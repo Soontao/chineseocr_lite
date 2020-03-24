@@ -1,12 +1,14 @@
 
 import torch
-from torchvision import  transforms
+from torchvision import transforms
 from torch.autograd import Variable
-import  numpy as np
-from PIL import  Image
-from config import  angle_type
+import numpy as np
+from PIL import Image
+from config import angle_type
+
+
 class AangleClassHandle():
-    def __init__(self,model_path , net , gpu_id=None ):
+    def __init__(self, model_path, net, gpu_id=None):
         '''
            初始化pytorch模型
            :param model_path: 模型地址(可以是模型的参数或者参数和计算图一起保存的文件)
@@ -14,14 +16,13 @@ class AangleClassHandle():
 
            :param gpu_id: 在哪一块gpu上运行
            '''
-
+        print(model_path)
         if gpu_id is not None and isinstance(gpu_id, int) and torch.cuda.is_available():
             self.device = torch.device("cuda:{}".format(gpu_id))
         else:
             self.device = torch.device("cpu")
         self.net = torch.load(model_path, map_location=self.device)
         print('device:', self.device)
-
 
         self.trans = transforms.Compose([
             # transforms.Resize((int(48 / 1.0), int(196 / 0.875))),
@@ -30,7 +31,6 @@ class AangleClassHandle():
             transforms.Resize((48, 196)),
             transforms.ToTensor(),
             transforms.Normalize([0.485, 0.456, 0.406], [0.229, 0.224, 0.225])])
-
 
         if net is not None:
             # 如果网络计算图和参数是分开保存的，就执行参数加载
@@ -49,8 +49,6 @@ class AangleClassHandle():
             print('load model')
         self.net.eval()
 
-
-
     def predict(self, im):
         """
         预测
@@ -63,7 +61,7 @@ class AangleClassHandle():
         image = image.view(1, *image.size())
         image = Variable(image)
         preds = self.net(image)
-        preds = torch.softmax(preds,1)
+        preds = torch.softmax(preds, 1)
         preds = preds.cpu().detach().numpy()
         preds = np.argmax(preds)
         return preds
