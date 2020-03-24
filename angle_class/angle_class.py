@@ -16,7 +16,6 @@ class AangleClassHandle():
 
            :param gpu_id: 在哪一块gpu上运行
            '''
-        print(model_path)
         if gpu_id is not None and isinstance(gpu_id, int) and torch.cuda.is_available():
             self.device = torch.device("cuda:{}".format(gpu_id))
         else:
