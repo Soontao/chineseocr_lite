@@ -1,5 +1,5 @@
 # build image
-FROM python:3-alpine AS build
+FROM python:3.7-alpine AS build
 
 RUN apk update && apk upgrade && apk add --no-cache build-base
 
@@ -12,7 +12,7 @@ WORKDIR /app/psenet/pse
 RUN make
 
 # run image
-FROM python:3-alpine
+FROM python:3.7-alpine
 
 WORKDIR /app
 
