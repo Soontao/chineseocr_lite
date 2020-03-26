@@ -1,7 +1,5 @@
-# build image
-FROM python:3.7-alpine AS build
-
-RUN apk update && apk upgrade && apk add --no-cache build-base
+# run image
+FROM python:3.7-slim
 
 WORKDIR /app
 
@@ -11,18 +9,15 @@ WORKDIR /app/psenet/pse
 
 RUN make
 
-# run image
-FROM python:3-slim
-
 WORKDIR /app
-
-COPY --from=build /app /app
 
 # install dependency
 RUN apt update
-RUN apt install -y python-dev build-essential
+RUN apt install -y python-dev build-essential libsm6 libglib2.0-0 libxext6 libxrender1
 RUN pip install -r requirements.txt
 
-CMD ["python", "app.py"]
+WORKDIR /app
+
+CMD ["python3", "app.py"]
 
 
