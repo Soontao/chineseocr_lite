@@ -17,9 +17,6 @@ RUN make
 
 WORKDIR /app
 
-
-WORKDIR /app
-
 CMD ["python3", "app.py"]
 
 
