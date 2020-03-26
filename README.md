@@ -1,7 +1,7 @@
 > 本项目基于[chineseocr](https://github.com/chineseocr/chineseocr) 与[psenet](https://github.com/WenmuZhou/PSENet.pytorch)  实现中文自然场景文字检测及识别
 
-![Docker Cloud Build Status](https://img.shields.io/docker/cloud/build/theosun/chineseocr_lite)
-![GitHub](https://img.shields.io/github/license/Soontao/chineseocr_lite)
+[![Docker Cloud Build Status](https://img.shields.io/docker/cloud/build/theosun/chineseocr_lite)](https://hub.docker.com/repository/docker/theosun/chineseocr_lite)
+[![GitHub](https://img.shields.io/github/license/Soontao/chineseocr_lite)](./LICENSE)
 
 ## 环境
 
