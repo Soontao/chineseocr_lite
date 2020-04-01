@@ -29,7 +29,7 @@ class CRNNHandle():
         else:
             self.device = torch.device("cpu")
         self.net = torch.load(model_path, map_location=self.device)
-        print('device:', self.device)
+        # print('device:', self.device)
 
         if net is not None:
             # 如果网络计算图和参数是分开保存的，就执行参数加载
@@ -48,7 +48,7 @@ class CRNNHandle():
                 net.load_state_dict(self.net)
 
             self.net = net
-            print('load model')
+            # print('load model')
         self.net.eval()
 
     def predict(self, im):

@@ -21,7 +21,7 @@ class AangleClassHandle():
         else:
             self.device = torch.device("cpu")
         self.net = torch.load(model_path, map_location=self.device)
-        print('device:', self.device)
+        # print('device:', self.device)
 
         self.trans = transforms.Compose([
             # transforms.Resize((int(48 / 1.0), int(196 / 0.875))),
@@ -45,7 +45,7 @@ class AangleClassHandle():
                 net.load_state_dict(self.net)
 
             self.net = net
-            print('load model')
+            # print('load model')
         self.net.eval()
 
     def predict(self, im):

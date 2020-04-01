@@ -24,7 +24,7 @@ class PSENetHandel():
             self.device = torch.device("cpu")
         self.net = torch.load(model_path, map_location=self.device)[
             'state_dict']
-        print('device:', self.device)
+        # print('device:', self.device)
 
         # for k in net.state_dict():
         #     print(k)
@@ -44,7 +44,7 @@ class PSENetHandel():
                 net.load_state_dict(self.net)
 
             self.net = net
-            print('load model')
+            # print('load model')
         self.net.eval()
 
     #
