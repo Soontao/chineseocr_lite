@@ -5,7 +5,7 @@ from angle_class import AangleClassHandle, shufflenet_v2_x0_5
 from utils import rotate_cut_img, solve, sort_box, draw_bbox, crop_rect
 from PIL import Image
 import numpy as np
-import cv2
+from cv2 import cv2
 
 
 if pse_model_type == "mobilenetv2":
