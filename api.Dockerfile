@@ -17,6 +17,6 @@ RUN make
 
 WORKDIR /app
 
-EXPOSE 3000
+EXPOSE 5000
 
-CMD ["python3", "app.py"]
+CMD ["uwsgi", "--http", "0.0.0.0:5000", "--module", "flask_app:app"]
